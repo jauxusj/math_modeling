@@ -85,7 +85,7 @@ for i in range(len(spline_curve[0])):
     curve_coords.append([spline_curve[0][i], spline_curve[1][i]]) 
  
 polygon = geom.Polygon(curve_coords) 
-points_number_per_side = 400 
+points_number_per_side = 100 
 x_pictures_limits = [0, 900] 
 y_pictures_limits = [700, 0] 
  
@@ -93,11 +93,11 @@ for x_point_coord in np.linspace(*x_pictures_limits, points_number_per_side):
     for y_point_coord in np.linspace(*y_pictures_limits, points_number_per_side): 
         p = geom.Point(x_point_coord, y_point_coord) 
         if p.within(polygon): 
-            plt.plot(x_point_coord, y_point_coord, 'go', ms = 0.5) 
+            plt.plot(x_point_coord, y_point_coord, 'mo', ms = 0.5) 
 
 
 
-plt.plot(spline_curve[0], spline_curve[1], 'c', lw=4)
+plt.plot(spline_curve[0], spline_curve[1], 'pink', lw=4)
 plt.ylim(700, 0)
 plt.xlim(0, 900)
 plt.savefig("horseapp.png")
