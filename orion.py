@@ -33,8 +33,8 @@ y5 = 565 - 350*np.sin(t5)
 ax.plot(x5, y5, '-', lw=2, color='c')
 
 t6 = np.linspace(np.pi,3*np.pi/2, 100)
-x6 = 11750 + 60*np.cos(t6)
-y6 = 450 - 300*np.sin(t6)
+x6 = 1200 + 97*np.cos(t6)
+y6 = 397 - 300*np.sin(t6)
 ax.plot(x6, y6, '-', lw=2, color='c')
 
 
