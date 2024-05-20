@@ -85,19 +85,47 @@ for i in range(len(spline_curve[0])):
     curve_coords.append([spline_curve[0][i], spline_curve[1][i]]) 
  
 polygon = geom.Polygon(curve_coords) 
-points_number_per_side = 100 
-x_pictures_limits = [0, 900] 
-y_pictures_limits = [700, 0] 
- 
-for x_point_coord in np.linspace(*x_pictures_limits, points_number_per_side): 
-    for y_point_coord in np.linspace(*y_pictures_limits, points_number_per_side): 
-        p = geom.Point(x_point_coord, y_point_coord) 
-        if p.within(polygon): 
-            plt.plot(x_point_coord, y_point_coord, 'mo', ms = 0.5) 
+points_number_per_side = 500 
+x_pictures_limits = [-100, 900] 
+y_pictures_limits = [700, -100] 
+points_coords = []
 
+for x_point_coord in np.linspace(*x_pictures_limits, points_number_per_side):
+    for y_point_coord in np.linspace(*y_pictures_limits, points_number_per_side):
+        p = geom.Point(x_point_coord, y_point_coord)
+        if p.within(polygon):
+            points_coords.append(x_point_coord)
+            points_coords.append(y_point_coord)
 
+x_p = np.array(points_coords[0::2])
+y_p = np.array(points_coords[1::2])
 
-plt.plot(spline_curve[0], spline_curve[1], 'pink', lw=4)
+def bell_function(x, y, intensity=1, dec_rate=[0.5, 0.5]):
+    scalar_func = intensity * np.exp(- dec_rate[0]*x**2 - dec_rate[1]*y**2) 
+    return scalar_func
+
+intensity_centerums_x = [530, 500, 450, 400, 350, 400, 450, 295, 600, 620, 650, 700, 490, 250, 570, 680, 600]
+intensity_centerums_y = [400, 500, 600, 600, 625, 685, 300, 650, 350, 300, 230, 400, 450, 680, 680, 580, 450]
+intensity_values = [0.1, 0.1, 0.1, 0.01, 0.1, 0.03, 0.09, 0.06, 0.1, 0.06, 0.12, 0.1, 0.05, 0.1, 0.03, 0.02, 0.0]
+
+def scalar_function(x, y, int_cen_x, int_cen_y, int_vel):
+    scalar_field = 0.0
+    for i in range(0, len(int_cen_x)):
+        scalar_field += int_vel[i] * bell_function(x-int_cen_x[i], y-int_cen_y[i], 0.030, [0.00015, 0.00015])
+    return scalar_field
+
+scalar_fields = []
+for i in range(0, len(x_p)):
+    calculate = scalar_function(x_p[i], y_p[i], intensity_centerums_x, 
+                                intensity_centerums_y, intensity_values)
+    scalar_fields.append(calculate)
+
+fig, ax = plt.subplots()
+sc_plot = ax.scatter(x_p, y_p, c=scalar_fields)
+ax.set_ylabel('Координата Y, м')
+ax.set_xlabel('Координата X, м')
 plt.ylim(700, 0)
-plt.xlim(0, 900)
+
+cbar = fig.colorbar(sc_plot)
+cbar.set_label("Комбинированное скалярное поле")
 plt.savefig("horseapp.png")

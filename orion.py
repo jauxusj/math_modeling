@@ -119,16 +119,49 @@ for i in range(len(spline_curve[0])):
  
 polygon = geom.Polygon(curve_coords) 
 points_number_per_side = 100 
-x_pictures_limits = [0, 2000] 
+x_pictures_limits = [2000, 0] 
 y_pictures_limits = [1400, 0] 
- 
+
+points_coords = []
 for x_point_coord in np.linspace(*x_pictures_limits, points_number_per_side): 
     for y_point_coord in np.linspace(*y_pictures_limits, points_number_per_side): 
         p = geom.Point(x_point_coord, y_point_coord) 
         if p.within(polygon): 
-            plt.plot(x_point_coord, y_point_coord, 'co', ms = 0.5) 
+             points_coords.append(x_point_coord)
+             points_coords.append(y_point_coord)
 
 
 
-plt.plot(spline_curve[0], spline_curve[1], 'c', lw=4)
+
+x_p = np.array(points_coords[0::2])
+y_p = np.array(points_coords[1::2])
+
+def bell_function(x, y, intensity=1, dec_rate=[0.5, 0.5]):
+    scalar_func = intensity * np.exp(- dec_rate[0]*x**2 - dec_rate[1]*y**2) 
+    return scalar_func
+
+intensity_centerums_x = [400, 700, 1200, 1000, 900]
+intensity_centerums_y = [700, 1000, 800, 550, 580]
+intensity_values = [10000, 20000, 1000, 1500, 6000]
+
+def scalar_function(x, y, int_cen_x, int_cen_y, int_vel):
+    scalar_field = 0.0
+    for i in range(0, len(int_cen_x)):
+        scalar_field += int_vel[i] * bell_function(x-int_cen_x[i], y-int_cen_y[i], 0.0030, [0.000035, 0.000035])
+    return scalar_field
+
+scalar_fields = []
+for i in range(0, len(x_p)):
+    calculate = scalar_function(x_p[i], y_p[i], intensity_centerums_x, 
+                                intensity_centerums_y, intensity_values)
+    scalar_fields.append(calculate)
+
+fig, ax = plt.subplots()
+sc_plot = ax.scatter(x_p, y_p, c=scalar_fields)
+ax.set_ylabel('Координата Y, м')
+ax.set_xlabel('Координата X, м')
+
+plt.ylim(1400, 0)
+cbar = fig.colorbar(sc_plot)
+cbar.set_label("Комбинированное скалярное поле")
 plt.savefig("orion.png")
