@@ -131,8 +131,6 @@ for x_point_coord in np.linspace(*x_pictures_limits, points_number_per_side):
              points_coords.append(y_point_coord)
 
 
-
-
 x_p = np.array(points_coords[0::2])
 y_p = np.array(points_coords[1::2])
 
@@ -140,9 +138,9 @@ def bell_function(x, y, intensity=1, dec_rate=[0.5, 0.5]):
     scalar_func = intensity * np.exp(- dec_rate[0]*x**2 - dec_rate[1]*y**2) 
     return scalar_func
 
-intensity_centerums_x = [400, 700, 1200, 1000, 900]
-intensity_centerums_y = [700, 1000, 800, 550, 580]
-intensity_values = [0.1, 0.1, 0.1, 0.1, 0.1]
+intensity_centerums_x = []
+intensity_centerums_y = []
+intensity_values = []
 
 def scalar_function(x, y, int_cen_x, int_cen_y, int_vel):
     scalar_field = 0.0
