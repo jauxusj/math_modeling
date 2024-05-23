@@ -118,7 +118,7 @@ for i in range(len(spline_curve[0])):
     curve_coords.append([spline_curve[0][i], spline_curve[1][i]]) 
  
 polygon = geom.Polygon(curve_coords) 
-points_number_per_side = 100 
+points_number_per_side = 500 
 x_pictures_limits = [2000, 0] 
 y_pictures_limits = [1400, 0] 
 
@@ -142,7 +142,7 @@ def bell_function(x, y, intensity=1, dec_rate=[0.5, 0.5]):
 
 intensity_centerums_x = [400, 700, 1200, 1000, 900]
 intensity_centerums_y = [700, 1000, 800, 550, 580]
-intensity_values = [10000, 20000, 1000, 1500, 6000]
+intensity_values = [0.1, 0.1, 0.1, 0.1, 0.1]
 
 def scalar_function(x, y, int_cen_x, int_cen_y, int_vel):
     scalar_field = 0.0

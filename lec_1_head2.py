@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import interpolate
 import shapely.geometry as geom
+import h5py
 
 img = plt.imread('H.jpg')
 fig, ax = plt.subplots()
@@ -119,6 +120,37 @@ for i in range(0, len(x_p)):
     calculate = scalar_function(x_p[i], y_p[i], intensity_centerums_x, 
                                 intensity_centerums_y, intensity_values)
     scalar_fields.append(calculate)
+
+
+float_type = np.float64
+int_type = np.int32
+
+picture_size_x = max(x_pictures_limits)-min(x_pictures_limits)
+picture_size_y = max(y_pictures_limits)-min(y_pictures_limits)
+picture_size = max(picture_size_x, picture_size_y)
+box_size = 100*picture_size
+
+gas_part_num = len(x_p)
+gas_coords = np.zeros([gas_part_num, 3], dtype=float_type)
+gas_vel= np.zeros([gas_part_num, 3], dtype=float_type)
+
+gas_masses = np.ones(gas_part_num, dtype=float_type)
+
+for i in range(len(x_p)):
+    gas_coords[i,0] = x_p[i]/picture_size + box_size/2
+    gas_coords[i][1] = y_p[i]/picture_size + box_size/2
+    gas_vel[i][0] = float_type(0.001)
+    gas_vel[i][0] = float_type(0)
+
+IC = h5py.File('IChorse.hdf5', 'w')
+header = IC.create_group('Header')
+part0 = IC.create_group('PartType0')
+header.attrs.create("BoxSize", box_size)
+part0.create_dataset('ParticleIDs', data=np.arange(0, gas_part_num))
+part0.create_dataset('Coordinates', data = gas_coords)
+part0.create_dataset('Velocities', data = gas_vel)
+part0.create_dataset('Masses', data = gas_masses)
+IC.close()
 
 fig, ax = plt.subplots()
 sc_plot = ax.scatter(x_p, y_p, c=scalar_fields)
